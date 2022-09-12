@@ -1,6 +1,6 @@
 # Datasets description
 
-* `crimes_in_chicago` - loaded from [Kaggle Crimes in Chicago](https://www.kaggle.com/datasets/currie32/crimes-in-chicago) - Classification
+* `crime_classification` - loaded from [Kaggle Crime Classification](https://www.kaggle.com/datasets/yasiradnan/crime-classifcication) - Classification
 
 * `south_korean_pollution` - loaded from [Kaggle South Korean Pollution](https://www.kaggle.com/datasets/calebreigada/south-korean-pollution?select=south-korean-pollution-data.csv) - Regression
 
