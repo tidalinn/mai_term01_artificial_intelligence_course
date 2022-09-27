@@ -1,8 +1,11 @@
 # plot_charts module
 import numpy as np
-import matplotlib.pyplot as plt
-import plotly.graph_objects as go
 from typing import Mapping, Tuple
+
+import matplotlib.pyplot as plt
+from matplotlib import cm
+
+import plotly.graph_objects as go
 
 
 # PLOT_2D_chart
@@ -171,7 +174,7 @@ def plot_animated_2d_chart(x: np.array,
 def plot_2d_contours_chart(x: np.array, 
                            y: np.array, 
                            loss_f: Mapping, 
-                           coords_s: Tuple = (None), 
+                           start_p: Tuple = (None), 
                            axes_names: list = ['x', 'y']):
 
     """ Plot 2D depths chart
@@ -180,7 +183,7 @@ def plot_2d_contours_chart(x: np.array,
         x (np.array): 1st axis weights
         y (np.array): 2nd axis weights
         loss_f (Mapping): loss function
-        coords_s (Tuple, optional): coords of starting point. Defaults to (None)
+        start_p (Tuple, optional): start point. Defaults to (None)
         axes_names (list, optional): axes names. Defaults to ['x', 'y']
     
     Result:
@@ -190,11 +193,11 @@ def plot_2d_contours_chart(x: np.array,
     try:
         fig, ax = plt.subplots(figsize = (8, 8))
 
-        plt.contourf(x, y, loss_f(x, y), cmap = 'Blues')
+        plt.contourf(x, y, loss_f(x, y), cmap = cm.coolwarm)
 
-        ax.scatter(*coords_s, c = 'red', marker = '*', s = 300)
-        coords_s = np.array(coords_s) + 0.2
-        ax.text(*coords_s, 'A', size = 24)
+        ax.scatter(*start_p, c = 'red', marker = '*', s = 300)
+        start_p = np.array(start_p) + 0.2
+        ax.text(*start_p, 'A', size = 24)
 
         ax.scatter(0, 0, c = 'red', marker = '*', s = 300)
         ax.text(-0.1, 0.3, 'B', size = 24)
@@ -214,7 +217,7 @@ def plot_2d_contours_chart(x: np.array,
 def plot_3d_chart(x: np.array, 
                   y: np.array, 
                   loss_f: Mapping, 
-                  coords_s: Tuple = (None),
+                  start_p: Tuple = (None),
                   axes_names: list = ['x', 'y']):
 
     """ Plot 3D chart
@@ -223,7 +226,7 @@ def plot_3d_chart(x: np.array,
         x (np.array): 1st axis weights
         y (np.array): 2nd axis weights
         loss_f (Mapping): loss function
-        coords_s (Tuple, optional): coords of starting point. Defaults to (None)
+        start_p (Tuple, optional): start point. Defaults to (None)
         axes_names (list, optional): axes names. Defaults to ['x', 'y']
 
     Result:
@@ -234,15 +237,12 @@ def plot_3d_chart(x: np.array,
         fig = plt.figure(figsize = (15, 10))
         ax = fig.add_subplot(projection = '3d')
 
-        ax.plot_surface(x, y, loss_f(x, y), alpha = 0.4, cmap = 'Blues')
+        ax.plot_surface(x, y, loss_f(x, y), alpha = 0.6, cmap=cm.coolwarm)
         
-        if coords_s != (None):
-            ax.scatter(*coords_s, c = 'red', marker = '*', s = 200)
-            coords_s = np.array(coords_s) + 0.3
-            ax.text(*coords_s, 'A', size = 24)
-
-        ax.scatter(0, 0, 0, c = 'red', marker = '*', s = 200)
-        ax.text(-0.1, -1.5, 4, 'B', size = 24)
+        if start_p != (None):
+            ax.scatter(*start_p, c = 'red', marker = '*', s = 200, zorder=10)
+            start_p = np.array(start_p) + 0.3
+            ax.text(*start_p, 'A', size = 24, zorder=10)
         
         ax.set_xlabel(axes_names[0], fontsize = 16)
         ax.set_ylabel(axes_names[1], fontsize = 16)
@@ -259,7 +259,7 @@ def plot_3d_chart(x: np.array,
 def plot_3d_gradient_chart(x: np.array, 
                            y: np.array, 
                            loss_f: Mapping, 
-                           coords_s: Tuple,
+                           start_p: Tuple,
                            grad_weights: list,
                            axes_names: list = ['x', 'y']):
 
@@ -269,7 +269,7 @@ def plot_3d_gradient_chart(x: np.array,
         x (np.array): 1st axis weights
         y (np.array): 2nd axis weights
         loss_f (Mapping): loss function
-        coords_s (Tuple): coords of starting point
+        start_p (Tuple): start point
         grad_weights (list): x weights list, y weights list, loss weights list
         axes_names (list, optional): axes names. Defaults to ['x', 'y']
 
@@ -281,18 +281,18 @@ def plot_3d_gradient_chart(x: np.array,
         fig = plt.figure(figsize = (15, 10))
         ax = fig.add_subplot(projection = '3d')
 
-        ax.plot_surface(x, y, loss_f(x, y), alpha = 0.4, cmap = 'Blues')
+        ax.plot_surface(x, y, loss_f(x, y), alpha = 0.6, cmap=cm.coolwarm)
         
-        coords_s = np.array(coords_s) + 0.3
-        ax.text(*coords_s, 'A', size = 24)
-        ax.text(-0.1, -1.5, 4, 'B', size = 24)
+        start_p = np.array(start_p) + 0.1
+        ax.text(*start_p, 'A', size = 24, zorder=10)
 
-        ax.plot(*grad_weights, '.-', c = 'red')
+        ax.plot(*grad_weights, '.-', c = 'red', label='Gradient descent', zorder=10)
         
         ax.set_xlabel(axes_names[0], fontsize = 16)
         ax.set_ylabel(axes_names[1], fontsize = 16)
         ax.set_zlabel('loss_func({0})'.format(', '.join(axes_names)), fontsize = 16)
         
+        plt.legend()
         plt.show()
     
     except:
@@ -303,8 +303,8 @@ def plot_3d_gradient_chart(x: np.array,
 # PLOT_ANIMATED_#D_CHART
 def plot_animated_3d_chart(x: np.array, 
                            y: np.array, 
-                           grad_weights: list,
                            loss_f: Mapping,
+                           grad_weights: list,
                            main_title: str):
 
     """ Plot 3D animated chart
@@ -312,8 +312,8 @@ def plot_animated_3d_chart(x: np.array,
     Args:
         x (np.array): 1st axis weights
         y (np.array): 2nd axis weights
-        grad_weights (list): x weights list, y weights list, loss weights list
         loss_f (Mapping): loss function
+        grad_weights (list): x weights list, y weights list, loss weights list
         main_title (str): _description_
     
     Result:
@@ -382,4 +382,4 @@ def plot_animated_3d_chart(x: np.array,
         fig.show()
 
     except:
-            print('Убедитесь в корректности переданных аргументов')
+        print('Убедитесь в корректности переданных аргументов')
