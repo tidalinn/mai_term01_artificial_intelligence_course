@@ -62,10 +62,10 @@ def plot_data(features, target,
 
 
 def plot_gradient_descent_2d(features, target,
-                             grads: list,
+                             weights: list,
                              title: str,
-                             m_range: np.ndarray,
-                             b_range: np.ndarray,
+                             m_range = np.arange(-30, 60, 2),
+                             b_range = np.arange(-40, 120, 2),
                              step_size: int = 1):
     
     # dimension
@@ -73,7 +73,7 @@ def plot_gradient_descent_2d(features, target,
         x = np.array(features).reshape(-1, 1)
     
     
-    weights = np.array(grads)
+    weights = np.array(weights)
     intercepts, slopes = weights[:, 0], weights[:, 1]
     mse = np.zeros((len(m_range), len(b_range)))
     
@@ -151,12 +151,12 @@ def plot_gradient_descent_2d(features, target,
 
 def plot_gradient_descent_function_2d(x_meshed, y_meshed,
                                       x_axis, y_axis,
-                                      grads: list,
+                                      weights: list,
                                       loss_f: Mapping,
                                       title: str,
                                       step_size: int = 1):
     
-    weights = np.array(grads)
+    weights = np.array(weights)
     intercepts, slopes = weights[:, 0], weights[:, 1]
 
     fig = make_subplots(rows=1,
@@ -219,7 +219,7 @@ def plot_gradient_descent_function_2d(x_meshed, y_meshed,
 def plot_gradient_descent_3d(x_meshed, y_meshed,
                              loss_f: Mapping,
                              title: str,
-                             grads = None,
+                             weights = None,
                              descent: bool = False):
     
     font_s = 16    
@@ -239,7 +239,7 @@ def plot_gradient_descent_3d(x_meshed, y_meshed,
 
     if descent == True:
 
-        weights = np.array(grads[0])
+        weights = np.array(weights)
         intercepts, slopes = weights[:, 0], weights[:, 1]
         
         start_point = intercepts[0], slopes[0]
