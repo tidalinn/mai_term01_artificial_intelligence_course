@@ -216,6 +216,37 @@ def plot_gradient_descent_function_2d(x_meshed, y_meshed,
     return fig
 
 
+def plot_function_2d(x_axis: np.array, 
+                     y_axis: np.array,
+                     loss_f: Mapping,
+                     title: str,
+                     weights = None,
+                     descent: bool = False):
+
+    font_s = 16
+    plt.figure(figsize=(8, 6))
+
+    plt.plot(x_axis, loss_f(x_axis, y_axis))
+
+    if descent == True:
+        weights = np.array(weights)
+        intercepts, slopes = weights[:, 0], weights[:, 1]
+
+        plt.plot(intercepts, slopes, 
+                 loss_f(intercepts, slopes),
+                 label='gradient')
+        
+        plt.legend()
+
+    plt.title(f'{title}\n', fontsize=font_s + 2)
+
+    plt.xlabel('w0', fontsize=font_s)
+    plt.ylabel('w1', fontsize=font_s)
+
+    plt.grid()
+    plt.show()
+
+
 def plot_gradient_descent_3d(x_meshed, y_meshed,
                              loss_f: Mapping,
                              title: str,
