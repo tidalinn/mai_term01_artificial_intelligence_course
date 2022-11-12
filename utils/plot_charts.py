@@ -12,65 +12,32 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 
-def plot_data(features, target, 
-              names: dict,
-              fit_line = None, 
-              x_range: Tuple = None, 
-              y_range: Tuple = None, 
-              dx: int = 20, 
-              dy: int = 20):
-
-    # figure
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=features, 
-                             y=target, 
-                             mode='markers', 
-                             marker=dict(size=6), 
-                             name='data'))
-
-    # regression
-    if fit_line is not None:
-        fig.add_trace(
-            go.Scatter(
-                x=features,
-                y=fit_line,
-                line_color='red',
-                mode='lines',
-                line=dict(width=5),
-                name='Fitted line',
-            )
-        )
+def plot_scatter(x, y, title: str):
     
-    # figure
-    fig.update_layout(
-        width=500,
-        height=500,
-        title=names['title'],
-        title_x=0.5,
-        title_y=0.93,
-        xaxis_title=names['x'],
-        yaxis_title=names['y'],
-        margin=dict(t=60),
-    )
+    plt.figure(figsize=(7, 7))
 
-    # axes
-    if x_range is not None and y_range is not None:
-        fig.update_xaxes(range=x_range, tick0=x_range[0], dtick=dx)
-        fig.update_yaxes(range=y_range, tick0=y_range[0], dtick=dy)
+    font_s = 16
 
-    return fig
+    plt.title(f'{title}\n', fontsize=font_s)
+
+    plt.scatter(x, y, c=y, cmap=cm.plasma)
+
+    plt.xlabel('X', fontsize=font_s)
+    plt.ylabel('Y', fontsize=font_s)
+
+    plt.grid()
+    plt.show()
 
 
-def plot_gradient_descent_2d(features, target,
-                             weights: list,
-                             title: str,
-                             m_range = np.arange(-30, 60, 2),
-                             b_range = np.arange(-40, 120, 2),
-                             step_size: int = 1):
+def plot_gradient_descent_loss_2d(x, y,
+                                  weights: list,
+                                  title: str,
+                                  m_range = np.arange(-30, 60, 2),
+                                  b_range = np.arange(-40, 120, 2)):
     
     # dimension
-    if features.ndim == 1:
-        x = np.array(features).reshape(-1, 1)
+    if x.ndim == 1:
+        x = np.array(x).reshape(-1, 1)
     
     
     weights = np.array(weights)
@@ -79,7 +46,7 @@ def plot_gradient_descent_2d(features, target,
     
     for i, slope in enumerate(m_range):
         for j, intercept in enumerate(b_range):
-            mse[i, j] = mean_squared_error(target, features * slope + intercept)
+            mse[i, j] = mean_squared_error(y, x * slope + intercept)
             
 
     # background
@@ -96,14 +63,14 @@ def plot_gradient_descent_2d(features, target,
     
 
     # gradient
-    fig.add_trace(go.Scatter(x=intercepts[::step_size],
-                             y=slopes[::step_size],
+    fig.add_trace(go.Scatter(x=intercepts,
+                             y=slopes,
                              mode='lines',
                              line=dict(width=3),
                              line_color='coral',
                              marker=dict(
                                  opacity=1,
-                                 size=np.linspace(19, 1, len(intercepts[::step_size])),
+                                 size=np.linspace(19, 1, len(intercepts)),
                                  line=dict(width=2)),
                              name='Descent'))
     
@@ -149,13 +116,13 @@ def plot_gradient_descent_2d(features, target,
     return fig
 
 
-def plot_gradient_descent_function_2d(x_meshed, y_meshed,
-                                      x_axis, y_axis,
+def plot_gradient_descent_function_2d(x, y,
                                       weights: list,
                                       loss_f: Mapping,
                                       title: str,
-                                      step_size: int = 1):
+                                      global_min: list = None):
     
+    x_meshed, y_meshed = np.meshgrid(x, y)
     weights = np.array(weights)
     intercepts, slopes = weights[:, 0], weights[:, 1]
 
@@ -165,20 +132,20 @@ def plot_gradient_descent_function_2d(x_meshed, y_meshed,
     
     # contour
     fig.add_trace(go.Contour(z=loss_f(x_meshed, y_meshed),
-                             x=x_axis,
-                             y=y_axis,
+                             x=x,
+                             y=y,
                              colorscale='haline'))
 
 
     # descent
-    fig.add_trace(go.Scatter(x=intercepts[::step_size],
-                             y=slopes[::step_size],
+    fig.add_trace(go.Scatter(x=intercepts,
+                             y=slopes,
                              mode='lines',
                              line=dict(width=3),
                              line_color='coral',
                              marker=dict(
                                  opacity=1,
-                                 size=np.linspace(19, 1, len(intercepts[::step_size])),
+                                 size=np.linspace(19, 1, len(intercepts)),
                                  line=dict(width=2)),
                              name='Descent'))
 
@@ -201,6 +168,16 @@ def plot_gradient_descent_function_2d(x_meshed, y_meshed,
                              name='End'))
 
     
+    # global minimum
+    if global_min is not None:
+        fig.add_trace(go.Scatter(x=[global_min[0]],
+                                 y=[global_min[1]],
+                                 mode='markers',
+                                 marker=dict(size=10, line=dict(width=2)),
+                                 marker_color='white',
+                                 name='Global Min'))
+
+    
     # legend
     fig.update_layout(width=700,
                       height=600,
@@ -216,55 +193,67 @@ def plot_gradient_descent_function_2d(x_meshed, y_meshed,
     return fig
 
 
-def plot_function_2d(x_axis: np.array, 
-                     y_axis: np.array,
+def plot_function_2d(x, y,
                      loss_f: Mapping,
                      title: str,
                      weights = None,
-                     descent: bool = False):
+                     descent: bool = False,
+                     ax = None):
 
     font_s = 16
-    plt.figure(figsize=(8, 6))
 
-    plt.plot(x_axis, loss_f(x_axis, y_axis))
 
-    if descent == True:
-        weights = np.array(weights)
-        intercepts, slopes = weights[:, 0], weights[:, 1]
+    if ax is None:
+        # background
+        plt.figure(figsize=(8, 6))
+        plt.plot(x, loss_f(x, y))
 
-        plt.plot(intercepts, slopes, 
-                 loss_f(intercepts, slopes),
-                 label='gradient')
+
+        # axes
+        plt.title(f'{title}\n', fontsize=font_s + 2)
+
+        plt.xlabel('w0', fontsize=font_s)
+        plt.ylabel('w1', fontsize=font_s)
+
+        plt.grid()
+
+    
+    else:
+        # background
+        ax.plot(x, loss_f(x, y))
+
         
-        plt.legend()
+        # axes
+        ax.set_title(f'{title}\n', fontsize=font_s + 2)
 
-    plt.title(f'{title}\n', fontsize=font_s + 2)
+        ax.set_xlabel('w0', fontsize=font_s)
+        ax.set_ylabel('w1', fontsize=font_s)
 
-    plt.xlabel('w0', fontsize=font_s)
-    plt.ylabel('w1', fontsize=font_s)
-
-    plt.grid()
-    plt.show()
+        ax.grid()
 
 
-def plot_gradient_descent_3d(x_meshed, y_meshed,
+def plot_gradient_descent_3d(x, y,
                              loss_f: Mapping,
                              title: str,
                              weights = None,
-                             descent: bool = False):
+                             descent: bool = False,
+                             ax = None):
     
     font_s = 16    
+    x_meshed, y_meshed = np.meshgrid(x, y)
 
+    
     # background
-    fig = plt.figure(figsize = (15, 10))
-    ax = fig.add_subplot(projection = '3d')
+    if ax is None:
+        fig = plt.figure(figsize=(15, 10))
+        ax = fig.add_subplot(projection='3d')
     
 
     # function body
     ax.plot_surface(x_meshed, 
                     y_meshed, 
                     loss_f(x_meshed, y_meshed), 
-                    alpha = 0.6, 
+                    alpha=0.6, 
                     cmap=cm.coolwarm)
     
 
@@ -297,12 +286,41 @@ def plot_gradient_descent_3d(x_meshed, y_meshed,
                    s=300)
     
 
+    # axes
     ax.set_title(title, fontsize=font_s + 2)
     
-    ax.set_xlabel('x', fontsize=font_s)
-    ax.set_ylabel('y', fontsize=font_s)
+    ax.set_xlabel('w0', fontsize=font_s)
+    ax.set_ylabel('w1', fontsize=font_s)
     ax.set_zlabel('loss', fontsize=font_s)
     
     ax.zaxis.labelpad = 10
 
-    plt.show()
+    if ax is None:
+        plt.show()
+
+
+def plot_function_gradient_2d_3d(x, y,
+                                 loss_f: Mapping,
+                                 title: str,
+                                 weights = None,
+                                 descent: bool = False):
+    
+    fig = plt.figure(figsize=(16, 6))
+    
+    
+    # first subplot
+    ax1 = fig.add_subplot(121)
+    plot_function_2d(x, y, loss_f, 
+                     f'2D {title} function',
+                     weights,
+                     descent,
+                     ax=ax1)
+    
+    
+    # second subplot
+    ax2 = fig.add_subplot(122, projection='3d')
+    plot_gradient_descent_3d(x, y, loss_f, 
+                             f'3D {title} function',
+                             weights,
+                             descent,
+                             ax=ax2)
