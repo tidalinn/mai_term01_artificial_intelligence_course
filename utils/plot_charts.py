@@ -237,7 +237,8 @@ def plot_gradient_descent_3d(x, y,
                              title: str,
                              weights = None,
                              descent: bool = False,
-                             ax = None):
+                             ax = None,
+                             global_min: list = None):
     
     font_s = 16    
     x_meshed, y_meshed = np.meshgrid(x, y)
@@ -270,20 +271,34 @@ def plot_gradient_descent_3d(x, y,
         ax.plot(intercepts, 
                 slopes, 
                 loss_f(intercepts, slopes),
-                color='blue')
+                color='blue',
+                label='Descent')
         
         # start point
         ax.scatter(*start_point,
-                loss_f(*start_point), 
-                color='red', 
-                s=300)
+                   loss_f(*start_point), 
+                   color='red', 
+                   s=200,
+                   label='Start')
         
         # end point
         ax.scatter(*end_point,
                    loss_f(*end_point),
                    color='coral',
                    marker='*',
-                   s=300)
+                   s=200,
+                   label='End')
+        
+
+    # global minimum
+    if global_min is not None:
+        ax.scatter(global_min[0],
+                   global_min[1],
+                   color='black',
+                   s=200,
+                   label='Global Min')
+        
+        ax.legend(loc='upper right')
     
 
     # axes

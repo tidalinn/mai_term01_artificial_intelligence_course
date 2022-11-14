@@ -1,6 +1,4 @@
-*/drafts/
+drafts/
 .ipynb_checkpoints/
-*/.ipynb_checkpoints/
-__pycache__/
-*/__pycache__/
+utils/__pycache__/
 datasets/human_faces/
