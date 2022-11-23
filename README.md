@@ -29,3 +29,5 @@ Contains folders and files with laboratory works.
 * `02_laboratory_work` - stores laboratory work on "pygmo" 
 * `03_laboratory_work` - stores laboratory work on "numba"
 * `04_laboratory_work` - stores laboratory work on "optuna"
+* `05_laboratory_work` - stores laboratory work on "parzen-rosenblatt"
+* `06_laboratory_work` - stores laboratory work on "mpi"
