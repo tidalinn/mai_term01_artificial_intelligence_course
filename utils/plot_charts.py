@@ -1,13 +1,17 @@
 import numpy as np
-import pandas as pd
 
-from typing import Mapping, Tuple
+from typing import Mapping
 
 from sklearn.metrics import mean_squared_error
 
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import matplotlib.patheffects as pe
+from matplotlib import cm
+
+from PIL import Image
+
+import imageio
 
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -197,8 +201,6 @@ def plot_contour_interactive_custom_func_2d(x, y,
 def plot_function_2d(x, y,
                      loss_f: Mapping,
                      title: str,
-                     weights = None,
-                     descent: bool = False,
                      ax = None):
 
     font_s = 16
@@ -330,10 +332,12 @@ def plot_custom_function_3d(x, y,
                             weights = None,
                             descent: bool = False,
                             ax = None,
-                            global_min: list = None):
+                            global_min: list = None,
+                            view: Mapping = None):
     
     font_s = 16    
     x_meshed, y_meshed = np.meshgrid(x, y)
+    x_min, y_min = global_min
 
     
     # background
@@ -347,7 +351,7 @@ def plot_custom_function_3d(x, y,
                     y_meshed, 
                     loss_f(x_meshed, y_meshed), 
                     alpha=0.6, 
-                    cmap=cm.coolwarm,)
+                    cmap=cm.coolwarm)
     
 
     if descent == True:
@@ -397,14 +401,18 @@ def plot_custom_function_3d(x, y,
 
     # global minimum
     if global_min is not None:
-        ax.scatter(global_min[0],
-                   global_min[1],
+        ax.scatter(x_min,
+                   y_min,
+                   loss_f(x_min, y_min),
                    color='black',
                    s=300,
                    label='Global Min')
     
 
     # axes
+    if view is True:
+        ax.view_init(0, 35)
+
     ax.set_title(title, fontsize=font_s + 2)
     
     ax.set_xlabel('w0', fontsize=font_s)
@@ -442,3 +450,146 @@ def plot_function_gradient_2d_3d(x, y,
                             weights,
                             descent,
                             ax=ax2)
+
+
+def create_frame_3d(i, x, y, loss_f, grads,
+                    title, title_grad, global_min, path):
+    
+    font_s = 16
+
+    x_meshed, y_meshed = np.meshgrid(x, y)
+    x_grads, y_grads = grads[:, 0], grads[:, 1]
+    x_min, y_min = global_min[0], global_min[1]
+
+
+    # background
+    fig = plt.figure(figsize=(9, 9))
+    ax = fig.add_subplot(projection='3d')
+
+
+    # function body
+    ax.plot_surface(x_meshed, 
+                    y_meshed, 
+                    loss_f(x_meshed, y_meshed), 
+                    alpha=0.6, 
+                    cmap=cm.coolwarm)
+
+
+    # descent
+    ax.scatter(x_grads[i], 
+               y_grads[i],
+               loss_f(x_grads[i], y_grads[i]),
+               color='red', 
+               path_effects=[pe.Stroke(linewidth=4, foreground='black'), pe.Normal()],
+               s=20,
+               label=title_grad)
+
+
+    # global minimum
+    ax.scatter(x_min,
+               y_min,
+               loss_f(x_min, y_min),
+               color='black',
+               s=20,
+               label='Global Min')
+
+
+    # axes
+    ax.set_title(f'{title}. Step №{i}\n', fontsize=font_s + 2)
+
+    ax.set_xlabel('w0', fontsize=font_s)
+    ax.set_ylabel('w1', fontsize=font_s)
+    ax.set_zlabel('loss', fontsize=font_s)
+
+    ax.zaxis.labelpad = 10
+
+
+    plt.savefig(f'{path}/{i}.png', 
+                transparent = False,  
+                facecolor = 'white')
+    plt.close()
+
+
+def create_frame_2d(i, x, y, loss_f, grads,
+                    title, title_grad, global_min, path):
+    
+    font_s = 16
+    
+    x_meshed, y_meshed = np.meshgrid(x, y)
+    z_meshed = loss_f(x_meshed, y_meshed)
+    
+    x_grads, y_grads = grads[:, 0], grads[:, 1]
+    x_min, y_min = global_min[0], global_min[1]
+    
+    
+    # plot color
+    levels = np.linspace(np.min(z_meshed), np.max(z_meshed), 20)
+    
+
+    # background
+    fig = plt.figure(figsize=(9, 9))
+    ax = fig.subplots()
+    
+    
+    # function body
+    ax.contourf(x_meshed, 
+                y_meshed, 
+                z_meshed, 
+                levels=levels, 
+                cmap=cm.coolwarm,
+                alpha=0.9)
+
+    
+    # descent
+    ax.scatter(x_grads[i], 
+               y_grads[i],
+               color='red', 
+               path_effects=[pe.Stroke(linewidth=5, foreground='black'), pe.Normal()],
+               s=20,
+               label=title_grad)
+
+    
+    # global minimum
+    ax.scatter(x_min,
+               y_min,
+               color='black',
+               s=20,
+               label='Global Minimum',
+               zorder=10)
+
+    
+    ax.legend(loc='lower right',
+              fontsize='large')
+        
+        
+    # axes
+    ax.set_title(f'{title}. Step №{i}', fontsize=font_s + 2)
+
+    ax.set_xlabel('w0', fontsize=font_s)
+    ax.set_ylabel('w1', fontsize=font_s)
+    
+    
+    plt.savefig(f'{path}/{i}.png', 
+                transparent = False,  
+                facecolor = 'white')
+    plt.close()
+
+
+def create_gif(x: np.array, 
+               y: np.array,
+               loss_f: Mapping,
+               grads: np.array,
+               title: str,
+               title_grad: str,
+               title_file: str,
+               global_min: list,
+               create_frame: Mapping,
+               path='./gifs'):
+    
+    for i in range(grads.shape[0]):
+        create_frame(i, x, y, loss_f, grads,
+                     title, title_grad, global_min, path)
+
+    frames = [Image.open(f'{path}/{i}.png') for i in range(grads.shape[0])]
+
+    imageio.mimsave(f'{path}/{title_file}.gif', frames, fps=2)
