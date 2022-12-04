@@ -2,12 +2,12 @@
 > Artificial Intelligence course (Kondaratsev Vadim Leonidovich)
 
 
-# Лабораторные работы № 1, 2, 3, 4
+# Лабораторные работы № 1, 2, 3, 4, 5, 6, 7, 8
 ## Конечномерная оптимизация, градиентные методы
 *тема «Оптимизация в ML»*
 
 * Выполнила: Кухтенкова П.Г.
-* Группа: M80-114M-22
+* Группа: M8O-114M-22
 * Преподаватель: Кондаратцев В.Л.
 
 ---
@@ -31,3 +31,5 @@ Contains folders and files with laboratory works.
 * `04_laboratory_work` - stores laboratory work on "optuna"
 * `05_laboratory_work` - stores laboratory work on "parzen-rosenblatt"
 * `06_laboratory_work` - stores laboratory work on "mpi"
+* `07_laboratory_work` - stores laboratory work on "sampling"
+* `08_laboratory_work` - stores laboratory work on "pca"
