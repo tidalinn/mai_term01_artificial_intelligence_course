@@ -1,4 +1,5 @@
 drafts/
+.idea/
 .ipynb_checkpoints/
 utils/__pycache__/
 datasets/human_faces/
