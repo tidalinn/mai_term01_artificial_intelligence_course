@@ -5,7 +5,6 @@ from typing import Mapping
 from sklearn.metrics import mean_squared_error
 
 import matplotlib.pyplot as plt
-from matplotlib import cm
 import matplotlib.patheffects as pe
 from matplotlib import cm
 
@@ -337,7 +336,6 @@ def plot_custom_function_3d(x, y,
     
     font_s = 16    
     x_meshed, y_meshed = np.meshgrid(x, y)
-    x_min, y_min = global_min
 
     
     # background
@@ -401,6 +399,8 @@ def plot_custom_function_3d(x, y,
 
     # global minimum
     if global_min is not None:
+        x_min, y_min = global_min
+        
         ax.scatter(x_min,
                    y_min,
                    loss_f(x_min, y_min),
@@ -593,3 +593,98 @@ def create_gif(x: np.array,
     frames = [Image.open(f'{path}/{i}.png') for i in range(grads.shape[0])]
 
     imageio.mimsave(f'{path}/{title_file}.gif', frames, fps=2)
+
+
+def plot_contour_search_2d(x, y,
+                           loss_f: Mapping,
+                           pop,
+                           title: str,
+                           z = None):
+    font_s = 16
+
+    x_meshed, y_meshed = np.meshgrid(x, y)
+
+    if z is None:
+        z = loss_f(x_meshed, y_meshed)
+
+    
+    # background
+    fig, ax = plt.subplots(figsize=(10, 7))
+    
+    
+    # function body
+    contour_map = ax.contour(x_meshed, 
+                             y_meshed, 
+                             z, 
+                             200,
+                             cmap=cm.coolwarm)
+
+
+    # search
+    ax.scatter(pop.get_x()[:, 0], 
+               pop.get_x()[:, 1], 
+               color='yellow', 
+               path_effects=[pe.Stroke(linewidth=3, foreground='black'), pe.Normal()],
+               s=10,
+               zorder=10,
+               label='pop')
+
+    
+    # global minimum
+    x_min, y_min = pop.get_x()[pop.best_idx()]
+    ax.scatter(x_min, 
+               y_min, 
+               marker='*',
+               color='red', 
+               path_effects=[pe.Stroke(linewidth=3, foreground='black'), pe.Normal()],
+               zorder=9,
+               s=200,
+               label='global minimum')
+
+    
+    # axes
+    ax.set_title(f'{title}\n', fontsize=font_s+2)
+    ax.set_xlabel('X', fontsize=font_s)
+    ax.set_ylabel('Y', fontsize=font_s)
+    
+    plt.colorbar(contour_map)
+    plt.tight_layout()
+    plt.legend(loc='lower left',
+               labelspacing=1.6,
+               borderpad=1,
+               fontsize='large')
+    plt.grid()
+
+    plt.show()
+
+
+def plot_cv_image_landscape_3d(x, y, z,
+                               title: str):
+    
+    font_s = 16    
+    x_meshed, y_meshed = np.meshgrid(x, y)
+
+    
+    # background
+    fig = plt.figure(figsize=(15, 10))
+    ax = fig.add_subplot(projection='3d')
+    
+
+    # function body
+    ax.plot_surface(x_meshed, 
+                    y_meshed, 
+                    z, 
+                    alpha=0.6, 
+                    cmap=cm.coolwarm,
+                    linewidth=0, 
+                    antialiased=False)
+
+    ax.set_title(title, fontsize=font_s + 2)
+    
+    ax.set_xlabel('X', fontsize=font_s)
+    ax.set_ylabel('Y', fontsize=font_s)
+    ax.set_zlabel('Img', fontsize=font_s)
+    
+    ax.zaxis.labelpad = 10
+
+    plt.show()
