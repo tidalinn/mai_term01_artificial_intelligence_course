@@ -620,26 +620,36 @@ def plot_contour_search_2d(x, y,
                              cmap=cm.coolwarm)
 
 
-    # search
-    ax.scatter(pop.get_x()[:, 0], 
-               pop.get_x()[:, 1], 
-               color='yellow', 
-               path_effects=[pe.Stroke(linewidth=3, foreground='black'), pe.Normal()],
-               s=10,
-               zorder=10,
-               label='pop')
-
+    try:
+        # search
+        ax.scatter(pop.get_x()[:, 0], 
+                   pop.get_x()[:, 1], 
+                   color='yellow', 
+                   path_effects=[pe.Stroke(linewidth=3, foreground='black'), pe.Normal()],
+                   s=10,
+                   zorder=10,
+                   label='pop')
+        
+        # global minimum
+        x_min, y_min = pop.get_x()[pop.best_idx()]
+        ax.scatter(x_min, 
+                   y_min, 
+                   marker='*',
+                   color='red', 
+                   path_effects=[pe.Stroke(linewidth=3, foreground='black'), pe.Normal()],
+                   zorder=9,
+                   s=200,
+                   label='global minimum')
     
-    # global minimum
-    x_min, y_min = pop.get_x()[pop.best_idx()]
-    ax.scatter(x_min, 
-               y_min, 
-               marker='*',
-               color='red', 
-               path_effects=[pe.Stroke(linewidth=3, foreground='black'), pe.Normal()],
-               zorder=9,
-               s=200,
-               label='global minimum')
+    except:            
+        # global minimum
+        ax.scatter(pop[:, 0], 
+                   pop[:, 1], 
+                   color='red', 
+                   path_effects=[pe.Stroke(linewidth=3, foreground='black'), pe.Normal()],
+                   zorder=9,
+                   s=10,
+                   label='global minimum')
 
     
     # axes
