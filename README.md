@@ -1,5 +1,5 @@
 ## mai_term01_artificial_intelligence_course
-> Artificial Intelligence course (Kondaratsev Vadim Leonidovich)
+> Artificial Intelligence course (Kondarattsev Vadim Leonidovich)
 
 
 # Лабораторные работы № 1, 2, 3, 4, 5, 6, 7, 8 + Курсовая работа 1 (ML и ПГП)
