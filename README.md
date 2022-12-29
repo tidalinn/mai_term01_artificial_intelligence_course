@@ -3,6 +3,8 @@
 
 
 # Лабораторные работы № 1, 2, 3, 4, 5, 6, 7, 8
+# Курсовая работа 1 (ML и ПГП)
+
 ## Конечномерная оптимизация, градиентные методы
 *тема «Оптимизация в ML»*
 
@@ -19,6 +21,8 @@ Contains folders and files with laboratory works.
 
 ### Folders
 
+* `coursework_ml_01` - stores coursework on "Datasets"
+* `coursework_mpi_01` - stores coursework on "MPI"
 * `datasets` - stores datasets
 * `gifs` - stores gifs of charts
 * `seminars` - stores files with tasks dealed with during seminars
