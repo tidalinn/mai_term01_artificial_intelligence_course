@@ -35,4 +35,3 @@ Contains folders and files with laboratory works.
 * `04_laboratory_work` - stores laboratory work on "optuna"
 * `05_laboratory_work` - stores laboratory work on "parzen-rosenblatt"
 * `06_laboratory_work` - stores laboratory work on "sampling"
-* `07_laboratory_work` - stores laboratory work on "pca"
