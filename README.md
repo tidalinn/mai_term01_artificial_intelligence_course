@@ -2,7 +2,7 @@
 > Artificial Intelligence course (Kondarattsev Vadim Leonidovich)
 
 
-# Лабораторные работы № 1, 2, 3, 4, 5, 6, 7, 8 + Курсовая работа 1 (ML и ПГП)
+# Лабораторные работы № 1, 2, 3, 4, 5, 6, 7 + Курсовая работа 1 (ML + ПГП)
 
 ## Конечномерная оптимизация, градиентные методы
 *тема «Оптимизация в ML»*
@@ -29,7 +29,7 @@ Contains folders and files with laboratory works.
 
 
 ### Files
-* `01_laboratory_work` - stores laboratory work on "SGD" 
+* `01_laboratory_work` - stores laboratory work on "sgd" 
 * `02_laboratory_work` - stores laboratory work on "pygmo" 
 * `03_laboratory_work` - stores laboratory work on "numba"
 * `04_laboratory_work` - stores laboratory work on "optuna"
