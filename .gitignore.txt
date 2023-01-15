@@ -1,6 +1,9 @@
-drafts/
 .idea/
+
 **/ipynb_checkpoints/
-utils/__pycache__/
-datasets/human_faces/
 **/logs/
+**/__pycache__/
+
+drafts/
+datasets/human_faces/
+datasets/semantickitti/
