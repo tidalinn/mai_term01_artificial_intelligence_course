@@ -29,7 +29,7 @@ Contains folders and files with laboratory works.
 
 
 ### Files
-* `01_laboratory_work` - stores laboratory work on "SGD" 
+* `01_laboratory_work` - stores laboratory work on "sgd" 
 * `02_laboratory_work` - stores laboratory work on "pygmo" 
 * `03_laboratory_work` - stores laboratory work on "numba"
 * `04_laboratory_work` - stores laboratory work on "optuna"
