@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 import matplotlib.patheffects as pe
 from matplotlib import cm
 
+import seaborn as sns
+
 from PIL import Image
 
 import imageio
@@ -697,4 +699,118 @@ def plot_cv_image_landscape_3d(x, y, z,
     
     ax.zaxis.labelpad = 10
 
+    plt.show()
+
+
+def plot_chart(data: np.array,
+               distr_f: Mapping,
+               title: str,
+               title_x: str = 'x',
+               title_y: str = 'f(x)'):
+    
+    font_s = 16
+    plt.figure(figsize=(10, 6))
+
+    plt.plot(data, distr_f(data))
+
+    plt.title(f'{title}\n', fontsize=font_s + 2)
+    plt.xlabel(title_x, fontsize=font_s)
+    plt.ylabel(title_y, fontsize=font_s)
+
+    plt.grid()
+    plt.show()
+
+
+def plot_taget_known_distribution_chart(data: np.array,
+                                        distr_f: Mapping,
+                                        distr_n: Mapping,
+                                        title: str,
+                                        const: float = 1,
+                                        title_x: str = 'x',
+                                        title_y: str = 'f(x)'):
+    
+    if const < 1:
+        raise ValueError('const should be greater than 0')
+    
+    font_s = 16
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    ax.plot(data, distr_f(data), label='target distribution')
+    ax.plot(data, const * distr_n(data), label='known distribution')
+    
+    plt.title(f'{title}\n', fontsize=font_s + 2)
+    plt.xlabel(title_x, fontsize=font_s)
+    plt.ylabel(title_y, fontsize=font_s)
+    plt.legend()
+    
+    plt.grid()
+    plt.show()
+
+
+def plot_sampled_chart(data: np.array,
+                       distr_f: Mapping,
+                       samples: np.array,
+                       title: str,
+                       title_x: str = 'x',
+                       title_y: str = 'f(x)'):
+
+    font_s = 16
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    ax.plot(data, distr_f(data), label='target distribution')
+
+    ax.scatter(samples,
+               distr_f(samples),
+               s=10,
+               color='orange',
+               label='sample distribution')
+    
+    ax.hist(samples, 
+            bins=80, 
+            density=True, 
+            alpha=0.2, 
+            color='green', 
+            edgecolor='black',
+            label='sample density')
+
+    sns.kdeplot(samples,
+                bw_method=.1, 
+                color='green',
+                label='sample density line')
+
+    sns.kdeplot(data, 
+                bw_method=.1, 
+                color='purple',
+                label='data density line')
+    
+    plt.title(f'{title}\n', fontsize=font_s + 2)
+    plt.xlabel(title_x, fontsize=font_s)
+    plt.ylabel(title_y, fontsize=font_s)
+    plt.legend()
+
+    plt.grid()
+    plt.show()
+
+
+def plot_check_dots_chart(data: np.array,
+                          distr_f: Mapping,
+                          samples: np.array,
+                          title: str,
+                          title_x: str = 'x',
+                          title_y: str = 'f(x)'):
+    
+    font_s = 16
+    x, y, c = samples
+    
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    ax.plot(data, distr_f(data))
+    ax.scatter(x, y, c=c, cmap="RdYlGn", lw=0, s=2, alpha=0.8)
+
+    plt.title(f'{title}\n', fontsize=font_s + 2)
+    plt.xlabel(title_x, fontsize=font_s)
+    plt.ylabel(title_y, fontsize=font_s)
+
+    plt.grid()
     plt.show()
