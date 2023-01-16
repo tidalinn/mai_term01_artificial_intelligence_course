@@ -752,7 +752,8 @@ def plot_sampled_chart(data: np.array,
                        samples: np.array,
                        title: str,
                        title_x: str = 'x',
-                       title_y: str = 'f(x)'):
+                       title_y: str = 'f(x)',
+                       **kwargs):
 
     font_s = 16
 
@@ -778,11 +779,21 @@ def plot_sampled_chart(data: np.array,
                 bw_method=.1, 
                 color='green',
                 label='sample density line')
+    
+    for key, value in kwargs.items():
+        if key == 'self_samples': 
+            ax.hist(value, 
+                    bins=80, 
+                    density=True, 
+                    alpha=0.2, 
+                    color='purple', 
+                    edgecolor='black',
+                    label='self sample density')
 
-    sns.kdeplot(data, 
-                bw_method=.1, 
-                color='purple',
-                label='data density line')
+            sns.kdeplot(value, 
+                        bw_method=.1, 
+                        color='purple',
+                        label='self density line')
     
     plt.title(f'{title}\n', fontsize=font_s + 2)
     plt.xlabel(title_x, fontsize=font_s)
