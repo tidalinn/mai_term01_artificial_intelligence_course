@@ -1,1 +1,1 @@
-tensor(93.6700), tensor(95.6800), tensor(96.7300), tensor(97.2200)
+tensor(93.9200), tensor(96.2000), tensor(97.0100), tensor(97.5300)

@@ -1,13 +1,16 @@
 import torch.nn.functional as F
 
-def train(iter, train_set, network, optimizer, log_interval: int = 10):
+def train(iter, train_set, network, optimizer, size, log_interval: int = 10):
     network.train()
     
     for batch_idx, (data, target) in enumerate(train_set):
         optimizer.zero_grad()
+
+        # data[iter * batch:(iter + 1) * batch]
         output = network(data)
         loss = F.nll_loss(output, target)
         loss.backward()
+
         optimizer.step()
         
         if batch_idx % log_interval == 0:

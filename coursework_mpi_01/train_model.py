@@ -32,13 +32,13 @@ if __name__ == '__main__':
         print(f'[ = = = = = Iter {i} = = = = = ]')
 
         if rank == 0:
-            [comm.send(network.state_dict(), k) for k in range(1,size)]
-            train(i, train_mnist, network, optimizer)
+            [comm.send(network.state_dict(), k) for k in range(1, size)]
+            train(i, train_mnist, network, optimizer, size)
             results_test.append(test(test_mnist, network))
 
         else:
             network.load_state_dict(comm.recv())
-            train(i, train_mnist, network, optimizer)
+            train(i, train_mnist, network, optimizer, size)
             results_test.append(test(test_mnist, network))
         
 

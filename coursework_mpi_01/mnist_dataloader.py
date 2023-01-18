@@ -8,7 +8,7 @@ def mnist_dataloader(train: bool = True,
        
        Args:
            train (bool, optional): train of test. Defaults to True
-           batch_size (int, optional): batch size. Defaults to 64
+           batch_size (int, optional): batch size. Defaults to 1
        
        Return:
            Loaded MNIST dataset
