@@ -26,7 +26,7 @@ def plot_scatter(x, y, title: str):
 
     plt.title(f'{title}\n', fontsize=font_s)
 
-    plt.scatter(x, y, c=y, cmap=cm.plasma)
+    plt.plot(x, y, c=y, cmap=cm.plasma)
 
     plt.xlabel('X', fontsize=font_s)
     plt.ylabel('Y', fontsize=font_s)
@@ -711,7 +711,7 @@ def plot_chart(data: np.array,
     font_s = 16
     plt.figure(figsize=(10, 6))
 
-    plt.plot(data, distr_f(data))
+    plt.scatter(data, distr_f(data))
 
     plt.title(f'{title}\n', fontsize=font_s + 2)
     plt.xlabel(title_x, fontsize=font_s)
@@ -823,5 +823,229 @@ def plot_check_dots_chart(data: np.array,
     plt.xlabel(title_x, fontsize=font_s)
     plt.ylabel(title_y, fontsize=font_s)
 
+    plt.grid()
+    plt.show()
+
+
+def compare_generated_data(data: np.array, 
+                           numpy_generated: np.array, 
+                           title: str,
+                           hist: bool = False):
+    
+    font_s = 16
+    
+    fig, ax = plt.subplots(figsize=(10, 6))
+    
+    if hist == False:
+        ax.plot(data, 
+                alpha=0.5, 
+                label='generated data')
+
+        ax.plot(numpy_generated, 
+                alpha=0.5,
+                label='numpy generated data')
+    
+    else:
+        ax.hist(data, 
+                alpha=0.5,
+                label='generated data')
+
+        ax.hist(numpy_generated, 
+                alpha=0.5, 
+                label='numpy generated')
+    
+    plt.title(f'{title}\n', fontsize=font_s + 2)
+    plt.xlabel('loops', fontsize=font_s)
+    plt.ylabel('generated', fontsize=font_s)
+    
+    plt.legend()
+    
+    plt.grid()
+    plt.show()
+
+
+def compare_density(data: np.array, 
+                    numpy_generated: np.array, 
+                    title: str,
+                    title_x: str = 'loops',
+                    title_y: str = 'generated',
+                    bins: int = 40):
+    
+    font_s = 16
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    
+    ax.hist(data, 
+            bins=bins, 
+            density=True, 
+            alpha=0.2, 
+            color='blue', 
+            edgecolor='black',
+            label='generated data density')
+
+    sns.kdeplot(data, 
+                bw_method=.1, 
+                color='blue',
+                label='generated data density line')
+    
+    ax.hist(numpy_generated, 
+            bins=bins, 
+            density=True, 
+            alpha=0.2, 
+            color='orange', 
+            edgecolor='black',
+            label='numpy generated data density')
+
+    sns.kdeplot(numpy_generated, 
+                bw_method=.1, 
+                color='orange',
+                label='numpy generated data density line')
+    
+    plt.title(f'{title}\n', fontsize=font_s + 2)
+    plt.xlabel(f'{title_x}\n', fontsize=font_s)
+    plt.ylabel(f'{title_y}\n', fontsize=font_s)
+    plt.legend()
+    
+    plt.grid()
+    plt.show()
+
+
+def plot_density(generated_data: np.array,
+                 title: str,
+                 bins: int = 40):
+    
+    font_s = 16
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    
+    ax.hist(generated_data, 
+            bins=bins, 
+            density=True, 
+            alpha=0.2, 
+            color='blue', 
+            edgecolor='black',
+            label='generated data density')
+
+    sns.kdeplot(generated_data, 
+                bw_method=.1, 
+                color='blue',
+                label='generated data density line')
+    
+    plt.title(f'{title}\n', fontsize=font_s + 2)
+    plt.xlabel('x', fontsize=font_s)
+    plt.ylabel('y', fontsize=font_s)
+    plt.legend()
+    
+    plt.grid()
+    plt.show()
+
+
+def plot_generated_data(x: np.array,
+                        y: np.array,
+                        title: str):
+    
+    font_s = 16
+    
+    plt.figure(figsize=(10, 6))
+    
+    plt.scatter(x, y)
+    
+    plt.title(f'{title}\n', fontsize=font_s + 2)
+    plt.xlabel('x', fontsize=font_s)
+    plt.ylabel('y', fontsize=font_s)
+    
+    plt.grid()
+    plt.show()
+
+
+def plot_gaussian_mixture(x: np.array,
+                          y: np.array,
+                          title: str):
+    font_s = 16
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    ax.plot(x, y[:, 0], label='1st distribution density')
+    ax.plot(x, y[:, 1], label='2nd distribution density')
+
+    plt.title(f'{title}\n', fontsize=font_s + 2)
+    plt.xlabel('x', fontsize=font_s)
+    plt.ylabel('y', fontsize=font_s)
+    plt.legend()
+
+    plt.grid()
+    plt.show()
+
+
+def plot_parzen_density_recovery(generated_data: np.array,
+                                 parzen_f: Mapping,
+                                 title: str,
+                                 h: float = 1):
+    
+    font_s = 16
+    
+    fig, ax = plt.subplots(figsize=(10, 6))
+    
+    x = np.linspace(generated_data.min(), generated_data.max(), len(generated_data))
+    parzen = parzen_f(x, generated_data, h)
+
+    ax.plot(x, parzen, label='evaluated density')
+    
+    ax.scatter(generated_data, 
+               np.zeros(len(generated_data)), 
+               s=12, 
+               marker='|',
+               label='density projection')
+
+    plt.title(f'Parzen Rozenblatt {title} Density\n', fontsize=font_s + 2)
+    plt.xlabel('x', fontsize=font_s)
+    plt.ylabel('density', fontsize=font_s)
+    plt.legend()
+
+    plt.grid()
+    plt.show()
+
+
+def plot_parzen_density_recovery(generated_data: np.array,
+                                 parzen_f: Mapping,
+                                 kernel: Mapping,
+                                 title: str,
+                                 h: float = 1,
+                                 bins: float = 40):
+    
+    font_s = 16
+    
+    fig, ax = plt.subplots(figsize=(10, 6))
+    
+    x = np.linspace(generated_data.min(), generated_data.max(), len(generated_data))
+    parzen = parzen_f(x, generated_data, kernel, h)
+
+    ax.plot(x, parzen, label='evaluated density')
+    
+    ax.scatter(generated_data, 
+               np.zeros(len(generated_data)), 
+               s=20, 
+               color='black',
+               marker='|',
+               label='density projection')
+    
+    ax.hist(generated_data, 
+            bins=bins, 
+            density=True, 
+            alpha=0.2, 
+            color='coral', 
+            edgecolor='black',
+            label='generated data density')
+    
+    sns.kdeplot(generated_data, 
+                bw_method=.1, 
+                color='coral',
+                label='generated data density line')
+
+    plt.title(f'{title} Density\n', fontsize=font_s + 2)
+    plt.xlabel('x', fontsize=font_s)
+    plt.ylabel('density', fontsize=font_s)
+    plt.legend()
+    
     plt.grid()
     plt.show()
